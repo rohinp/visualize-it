@@ -23,6 +23,7 @@ Visualize-It is an LLM-driven data visualization tool that automatically generat
 
 ### Backend
 - FastAPI (Python)
+- Modular architecture with services, routes, models, and utilities
 - Ollama for local LLM processing with AsyncClient for improved performance
 - Pandas for data manipulation
 - Intelligent fallback visualization generation when LLM is unavailable
@@ -53,12 +54,12 @@ Visualize-It is an LLM-driven data visualization tool that automatically generat
 
 3. Install dependencies:
    ```
-   pip install fastapi uvicorn pandas requests ollama-python asyncio
+   pip install fastapi uvicorn pandas requests ollama-python asyncio pydantic
    ```
 
 4. Start the backend server:
    ```
-   python app.py
+   uvicorn main:app --reload
    ```
    The server will run on http://localhost:8000
 
@@ -102,17 +103,31 @@ The application includes a comprehensive logging system:
 
 ```
 visualize-it/
-├── backend/           # FastAPI backend
-│   ├── app.py         # Main server file
-│   └── backend.log    # Server-side logs
-├── frontend/          # React frontend
-│   ├── public/        # Static files
-│   ├── src/           # React components and services
-│   │   ├── components/  # UI components
-│   │   └── services/    # Service modules including LoggingService
-│   └── client.log     # Client-side logs
-├── .gitignore        # Git ignore file
-└── LICENSE            # MIT License
+├── backend/                # FastAPI backend
+│   ├── main.py            # Main application entry point
+│   ├── models/            # Data models
+│   │   ├── settings.py    # Application configuration
+│   │   └── visualization.py # Visualization data models
+│   ├── routes/            # API routes
+│   │   ├── api_routes.py  # Visualization API endpoints
+│   │   └── logging_routes.py # Logging endpoints
+│   ├── services/          # Business logic services
+│   │   ├── ollama_service.py # Ollama API integration
+│   │   ├── visualization_service.py # Visualization generation
+│   │   └── logging_service.py # Logging functionality
+│   ├── utils/             # Utility functions
+│   │   ├── data_utils.py  # Data processing utilities
+│   │   ├── visualization_utils.py # Visualization helpers
+│   │   └── config_utils.py # Configuration utilities
+│   └── backend.log        # Server-side logs
+├── frontend/              # React frontend
+│   ├── public/            # Static files
+│   ├── src/               # React components and services
+│   │   ├── components/    # UI components
+│   │   └── services/      # Service modules including LoggingService
+│   └── client.log         # Client-side logs
+├── .gitignore             # Git ignore file
+└── LICENSE                # MIT License
 ```
 
 ## Configuration
@@ -138,6 +153,32 @@ For optimal visualization generation, we recommend using code-focused LLM models
 - **Other options**: CodeLlama, WizardCoder, or any other code-specialized model available in Ollama
 
 These code-focused models perform better at generating structured JSON and understanding data visualization patterns compared to general-purpose models.
+
+## Architecture
+
+### Modular Backend Design
+
+The backend has been refactored into a modular architecture to improve maintainability, testability, and separation of concerns:
+
+- **Models**: Define data structures and application settings
+  - `Settings`: Application configuration loaded from environment variables
+  - `Visualization`: Data models for visualization requests and responses
+
+- **Services**: Implement core business logic
+  - `OllamaService`: Handles communication with the Ollama API
+  - `VisualizationService`: Manages visualization generation from various data sources
+  - `LoggingService`: Centralizes logging functionality
+
+- **Routes**: Define API endpoints
+  - `api_routes`: Visualization-related endpoints
+  - `logging_routes`: Logging-related endpoints
+
+- **Utils**: Provide helper functions
+  - `DataUtils`: Data processing and transformation
+  - `VisualizationUtils`: Visualization generation helpers
+  - `ConfigUtils`: Configuration management
+
+This architecture makes the codebase more maintainable and easier to extend with new features.
 
 ## Advanced Features
 

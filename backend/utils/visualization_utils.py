@@ -5,6 +5,66 @@ from typing import Dict, Any
 logger = logging.getLogger("visualize-it")
 
 
+def generate_sample_plotly_visualizations():
+    """Generate sample Plotly visualizations when parsing fails"""
+    logger.info("Generating sample Plotly visualizations")
+    return {
+        "visualizations": [
+            {
+                "type": "plotly",
+                "plotlyData": [
+                    {
+                        "x": ["A", "B", "C", "D"],
+                        "y": [10, 15, 7, 12],
+                        "type": "bar",
+                        "name": "Sample Data",
+                    }
+                ],
+                "plotlyLayout": {
+                    "title": "Sample Bar Chart",
+                    "xaxis": {"title": "Category"},
+                    "yaxis": {"title": "Value"},
+                },
+                "title": "Sample Bar Chart",
+                "description": "A sample bar chart showing placeholder data",
+            },
+            {
+                "type": "plotly",
+                "plotlyData": [
+                    {
+                        "values": [30, 70],
+                        "labels": ["Group 1", "Group 2"],
+                        "type": "pie",
+                        "name": "Sample Pie Data",
+                    }
+                ],
+                "plotlyLayout": {"title": "Sample Pie Chart"},
+                "title": "Sample Pie Chart",
+                "description": "A sample pie chart showing placeholder data",
+            },
+            {
+                "type": "plotly",
+                "plotlyData": [
+                    {
+                        "x": [1, 2, 3, 4, 5],
+                        "y": [10, 15, 13, 17, 20],
+                        "type": "scatter",
+                        "mode": "lines+markers",
+                        "name": "Sample Series",
+                    }
+                ],
+                "plotlyLayout": {
+                    "title": "Sample Line Chart",
+                    "xaxis": {"title": "X"},
+                    "yaxis": {"title": "Y"},
+                },
+                "title": "Sample Line Chart",
+                "description": "A sample line chart showing placeholder data",
+            },
+        ]
+    }
+
+
 class VisualizationUtils:
     """
     Utility class for visualization generation and validation

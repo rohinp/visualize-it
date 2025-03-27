@@ -9,15 +9,17 @@ class Settings:
     Settings class for application configuration.
     Loads configuration from environment variables with sensible defaults.
     """
+
     def __init__(self):
-        self.DEFAULT_MODEL = os.environ.get("DEFAULT_MODEL", "llama3:8b")
+        self.DEFAULT_MODEL = os.environ.get("DEFAULT_MODEL", "deepseek-coder-v2")
         self.OLLAMA_API_TIMEOUT = int(os.environ.get("OLLAMA_API_TIMEOUT", "60"))
-        self.OLLAMA_API_URL = os.environ.get(
-            "OLLAMA_API_URL", "http://localhost:11434"
-        )
+        # Always default to localhost for local development
+        self.OLLAMA_API_URL = os.environ.get("OLLAMA_API_URL", "http://localhost:11434")
         # Remove the http:// prefix for the Ollama client
-        self.OLLAMA_HOST = self.OLLAMA_API_URL.replace("http://", "")
-        
+        # Make sure we don't have any trailing slashes or protocol prefixes
+        self.OLLAMA_HOST = self.OLLAMA_API_URL.replace("http://", "").replace("https://", "").rstrip("/")
+        logger.info(f"Ollama host set to: {self.OLLAMA_HOST}")
+
         # Logging settings
         self.LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
         self.SERVER_LOG_FILE = os.environ.get("SERVER_LOG_FILE", "backend.log")
@@ -30,7 +32,6 @@ class Settings:
             f"OLLAMA_API_URL={self.OLLAMA_API_URL}, "
             f"OLLAMA_HOST={self.OLLAMA_HOST}"
         )
-
 
 
 # Create a singleton instance

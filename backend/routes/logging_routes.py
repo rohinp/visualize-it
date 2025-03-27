@@ -1,12 +1,12 @@
 import logging
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form, Request
 from typing import Dict, Any, Optional
 
 from services.logging_service import LoggingService
 
 logger = logging.getLogger("visualize-it")
 
-router = APIRouter(prefix="/logs", tags=["logs"])
+router = APIRouter(prefix="/api/logs", tags=["logs"])
 
 
 
@@ -73,14 +73,36 @@ async def clear_client_logs(
     return {"status": "success"}
 
 @router.post("/client")
-async def log_client_message(
+async def log_client_message_json(
     log_data: Dict[str, Any],
     logging_service: LoggingService = Depends(get_logging_service)
 ):
     """
-    Log a message from the client
+    Log a message from the client using JSON
     """
     success = logging_service.log_client_message(log_data)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to log client message")
     return {"status": "success"}
+
+@router.post("/client/add")
+async def log_client_message_form(
+    request: Request,
+    logging_service: LoggingService = Depends(get_logging_service)
+):
+    """
+    Log a message from the client using form data
+    """
+    try:
+        form_data = await request.form()
+        log_data = {
+            "level": form_data.get("level", "INFO"),
+            "message": form_data.get("message", "")
+        }
+        success = logging_service.log_client_message(log_data)
+        if not success:
+            raise HTTPException(status_code=500, detail="Failed to log client message")
+        return {"status": "success"}
+    except Exception as e:
+        logger.error(f"Error processing client log: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing client log: {str(e)}")

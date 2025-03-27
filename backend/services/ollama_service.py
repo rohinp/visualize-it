@@ -237,10 +237,69 @@ class OllamaService:
         Check if the Ollama API is available
         """
         try:
+            # First try with AsyncClient
+            try:
+                logger.info(f"Checking Ollama availability with AsyncClient at {self.host}")
+                client = AsyncClient(host=self.host)
+                await client.list()
+                logger.info("Ollama is available via AsyncClient")
+                return True
+            except Exception as e:
+                logger.warning(f"AsyncClient check failed: {str(e)}")
+                
+            # Fallback to direct API call
+            logger.info(f"Trying fallback check with direct API call to {self.base_url}/api/tags")
             response = requests.get(
                 f"{self.base_url}/api/tags",
                 timeout=2,  # Very short timeout for the check
             )
-            return response.status_code == 200
-        except requests.exceptions.RequestException:
+            available = response.status_code == 200
+            logger.info(f"Ollama API direct check result: {'available' if available else 'unavailable'}")
+            return available
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Ollama API is not available: {str(e)}")
             return False
+        except Exception as e:
+            logger.error(f"Unexpected error checking Ollama availability: {str(e)}")
+            return False
+            
+    async def list_models(self) -> Dict[str, Any]:
+        """
+        List available models directly from the Ollama API
+        """
+        try:
+            # Try using AsyncClient first
+            try:
+                logger.info(f"Attempting to list models using AsyncClient with host: {self.host}")
+                client = AsyncClient(host=self.host)
+                response = await client.list()
+                if response and 'models' in response:
+                    logger.info(f"Successfully retrieved {len(response['models'])} models from Ollama API using AsyncClient")
+                    return {"models": response["models"], "success": True}
+                else:
+                    logger.warning("No models found in Ollama API response using AsyncClient")
+            except Exception as e:
+                logger.error(f"Error listing models using AsyncClient: {str(e)}")
+                
+            # Fallback to direct API call
+            logger.info(f"Falling back to direct API call to {self.base_url}/api/tags")
+            response = requests.get(
+                f"{self.base_url}/api/tags",
+                timeout=self.timeout
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if 'models' in data and isinstance(data['models'], list):
+                    logger.info(f"Successfully retrieved {len(data['models'])} models from direct API call")
+                    return {"models": data["models"], "success": True}
+                else:
+                    logger.warning(f"Unexpected response format from direct API call: {data.keys()}")
+            else:
+                logger.error(f"Failed to get models from direct API call: {response.status_code}")
+                
+            # If we reach here, both methods failed
+            return {"models": [], "success": False, "error": "Failed to retrieve models from Ollama API"}
+        except Exception as e:
+            logger.error(f"Unexpected error listing models from Ollama API: {str(e)}")
+            return {"models": [], "success": False, "error": str(e)}

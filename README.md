@@ -39,7 +39,9 @@ Visualize-It is an LLM-driven data visualization tool that automatically generat
 
 ### Installation
 
-#### Backend Setup
+#### Option 1: Separate Frontend and Backend Servers (Development Mode)
+
+##### Backend Setup
 
 1. Navigate to the backend directory:
    ```
@@ -54,7 +56,7 @@ Visualize-It is an LLM-driven data visualization tool that automatically generat
 
 3. Install dependencies:
    ```
-   pip install fastapi uvicorn pandas requests ollama-python asyncio pydantic
+   pip install -r requirements.txt
    ```
 
 4. Start the backend server:
@@ -63,7 +65,7 @@ Visualize-It is an LLM-driven data visualization tool that automatically generat
    ```
    The server will run on http://localhost:8000
 
-#### Frontend Setup
+##### Frontend Setup
 
 1. Navigate to the frontend directory:
    ```
@@ -80,6 +82,45 @@ Visualize-It is an LLM-driven data visualization tool that automatically generat
    npm start
    ```
    The application will open in your browser at http://localhost:3000
+
+#### Option 2: Unified Server (Production Mode)
+
+##### Method A: Using the Startup Script
+
+1. Run the startup script from the project root:
+   ```
+   ./start.sh
+   ```
+
+   This script will:
+   - Build the frontend with npm
+   - Set up a Python virtual environment if needed
+   - Install all required dependencies
+   - Start the unified server
+
+2. Access the application at http://localhost:8000
+
+##### Method B: Manual Setup
+
+1. Build the frontend:
+   ```
+   cd frontend
+   npm install
+   npm run build
+   ```
+
+2. Start the unified server:
+   ```
+   cd backend
+   python -m venv venv  # If not already created
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   pip install -r requirements.txt
+   uvicorn main:app --host 0.0.0.0 --port 8000
+   ```
+
+3. Access the application at http://localhost:8000
+
+The unified server serves both the API and the frontend UI from the same port, which simplifies deployment and eliminates CORS issues.
 
 ## Usage
 

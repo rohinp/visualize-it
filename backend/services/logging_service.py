@@ -67,9 +67,9 @@ class LoggingService:
             logger.error(f"Error logging client message: {str(e)}")
             return False
     
-    def _get_logs_from_file(self, file_path: str, max_lines: int = 1000) -> List[str]:
+    def _get_logs_from_file(self, file_path: str, max_lines: int = 1000) -> List[Dict[str, Any]]:
         """
-        Get logs from a file
+        Get logs from a file and parse them into structured objects
         """
         try:
             if not os.path.exists(file_path):
@@ -78,7 +78,45 @@ class LoggingService:
             with open(file_path, 'r') as f:
                 # Read the last max_lines lines
                 lines = f.readlines()
-                return lines[-max_lines:] if len(lines) > max_lines else lines
+                lines = lines[-max_lines:] if len(lines) > max_lines else lines
+                
+                # Parse each line into a structured log object
+                parsed_logs = []
+                for line in lines:
+                    # Skip empty lines or comment lines
+                    if not line.strip() or line.strip().startswith('#'):
+                        continue
+                        
+                    try:
+                        # Try to parse the log line format: timestamp - source - LEVEL - message
+                        parts = line.strip().split(' - ', 3)
+                        if len(parts) >= 4:
+                            timestamp, source, level, message = parts
+                            parsed_logs.append({
+                                "timestamp": timestamp,
+                                "source": source,
+                                "level": level.lower(),
+                                "message": message
+                            })
+                        else:
+                            # If we can't parse properly, just add the whole line as a message
+                            parsed_logs.append({
+                                "timestamp": datetime.now().isoformat(),
+                                "source": "unknown",
+                                "level": "info",
+                                "message": line.strip()
+                            })
+                    except Exception as parsing_error:
+                        logger.warning(f"Error parsing log line: {str(parsing_error)}")
+                        # Add as unparsed message
+                        parsed_logs.append({
+                            "timestamp": datetime.now().isoformat(),
+                            "source": "unknown",
+                            "level": "error",
+                            "message": f"Unparsed log: {line.strip()}"
+                        })
+                
+                return parsed_logs
         except Exception as e:
             logger.error(f"Error reading log file {file_path}: {str(e)}")
             return []

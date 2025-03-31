@@ -1,0 +1,124 @@
+.logs-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logs-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.logs-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.logs-tabs {
+    display: flex;
+    gap: 10px;
+}
+
+.logs-tabs button {
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logs-tabs button.active {
+    background-color: #4682b4;
+    color: white;
+    border-color: #36648b;
+}
+
+.logs-options {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.logs-options label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.logs-options select {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.logs-options button {
+    padding: 8px 16px;
+    background-color: #4682b4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logs-options button:hover {
+    background-color: #36648b;
+}
+
+.logs-options button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.logs-error {
+    color: #d32f2f;
+    background-color: #ffebee;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.logs-content {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 500px;
+    overflow-y: auto;
+    background-color: #f8f8f8;
+}
+
+.logs-list {
+    font-family: monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
+    padding: 10px;
+}
+
+.log-entry {
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.error-log {
+    color: #d32f2f;
+}
+
+.warning-log {
+    color: #ff9800;
+}
+
+.info-log {
+    color: #2196f3;
+}
+
+.debug-log {
+    color: #4caf50;
+}
+
+.no-logs {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+}

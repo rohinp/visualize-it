@@ -1,0 +1,31 @@
+.download-options {
+    margin: 0;
+    width: 100%;
+}
+
+.download-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.download-buttons button {
+    padding: 10px 15px;
+    background-color: #4682b4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0 5px;
+}
+
+.download-buttons button i {
+    margin-right: 5px;
+}
+
+.download-buttons button:hover {
+    opacity: 0.9;
+}
